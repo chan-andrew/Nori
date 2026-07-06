@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
@@ -20,6 +20,18 @@ export default function Query() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { runSearch, location, setLocation, setPending } = useSearch();
+
+  // Location is asked for first, before the text prompt: fall back to the
+  // profile's saved address, otherwise send the user to /location and come
+  // back here once it's set.
+  useEffect(() => {
+    if (location) return;
+    if (user?.saved_lat != null && user?.saved_lng != null) {
+      setLocation({ address: user.saved_address || "Saved address", lat: user.saved_lat, lng: user.saved_lng });
+      return;
+    }
+    navigate("/location");
+  }, [location, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function submit(raw) {
     const value = raw.trim();
@@ -49,8 +61,8 @@ export default function Query() {
         }
       }
 
-      // Location comes right after the prompt: use the session's, fall back to
-      // the profile's saved address, otherwise ask on the next screen.
+      // Location is normally set before this screen is reachable (see the
+      // effect above); this is just a safety net against a race on submit.
       let loc = location;
       if (!loc && user?.saved_lat != null && user?.saved_lng != null) {
         loc = { address: user.saved_address || "Saved address", lat: user.saved_lat, lng: user.saved_lng };
@@ -69,6 +81,10 @@ export default function Query() {
       setLoading(false);
     }
   }
+
+  // Redirecting to /location (see the effect above) — skip the flash of the
+  // text prompt while that happens.
+  if (!location) return null;
 
   return (
     <section className="pt-14 sm:pt-20">

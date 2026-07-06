@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useSearch } from "../context/SearchContext.jsx";
 import { updateProfile } from "../lib/data.js";
 
-// Location capture sits right after the text prompt. Distance and delivery
-// time can't render without it, and with restaurants across five
-// neighborhoods it decides which subset of the dataset is close enough to
-// surface. Kept per session; optionally saved to the profile.
+// Location capture is the first step of ordering — before the text prompt.
+// Distance and delivery time can't render without it, and with restaurants
+// across five neighborhoods it decides which subset of the dataset is close
+// enough to surface. Kept per session; auto-saved to the profile when signed
+// in. Also reachable mid-session (with a pending query) via the "Change"
+// link on the results page, in which case finishing here re-runs the search
+// instead of moving on to the query screen.
 
 const NEIGHBORHOODS = [
   { name: "Oakland", lat: 40.442, lng: -79.955 },
@@ -50,16 +53,12 @@ export default function Location() {
   const { user, setUser } = useAuth();
   const { pending, location, setLocation, runSearch } = useSearch();
   const [address, setAddress] = useState(location?.address ?? user?.saved_address ?? "");
-  const [saveToProfile, setSaveToProfile] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
 
-  // No parsed query waiting — nothing to search once located.
-  if (!pending) return <Navigate to="/order" replace />;
-
   async function finish(loc) {
     setLocation(loc);
-    if (saveToProfile && user) {
+    if (user) {
       try {
         const updated = await updateProfile(user.id, {
           saved_address: loc.address ?? "",
@@ -68,11 +67,15 @@ export default function Location() {
         });
         setUser(updated);
       } catch {
-        // Saving the address is best-effort; the search still runs.
+        // Saving the address is best-effort; the flow continues either way.
       }
     }
-    await runSearch(pending.text, pending.filters, loc, pending.queryLogId);
-    navigate("/results");
+    if (pending) {
+      await runSearch(pending.text, pending.filters, loc, pending.queryLogId);
+      navigate("/results");
+    } else {
+      navigate("/order");
+    }
   }
 
   function useMyLocation() {
@@ -130,8 +133,8 @@ export default function Location() {
         Where should it come to?
       </h1>
       <p className="mt-3 text-faint">
-        Distance and delivery times need a starting point. We only keep it for this session
-        {user ? " unless you save it" : ""}.
+        Distance and delivery times need a starting point.{" "}
+        {user ? "We'll save it to your account for next time." : "We'll keep it for this session."}
       </p>
 
       <div className="mt-8 flex flex-col gap-4">
@@ -166,18 +169,6 @@ export default function Location() {
             Set address
           </button>
         </form>
-
-        {user && (
-          <label className="flex items-center gap-2 text-sm text-faint">
-            <input
-              type="checkbox"
-              checked={saveToProfile}
-              onChange={(e) => setSaveToProfile(e.target.checked)}
-              className="accent-accent"
-            />
-            Save as my default address
-          </label>
-        )}
 
         {error && (
           <p role="alert" className="text-sm font-medium text-danger">{error}</p>

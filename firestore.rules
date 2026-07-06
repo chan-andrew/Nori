@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// Matches the access patterns in client/src/lib/data.js and
+// client/src/context/AuthContext.jsx. Paste into Firebase Console ->
+// Firestore Database -> Rules -> Publish (this file isn't auto-deployed;
+// there's no `firebase.json` / CLI wiring in this repo).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /order_history/{orderId} {
+      // Anonymous orders are logged too (userId ?? null in recordOrder).
+      allow create: if true;
+      allow read: if request.auth != null && resource.data.user_id == request.auth.uid;
+    }
+
+    match /favorites/{favoriteId} {
+      allow create: if request.auth != null && request.resource.data.user_id == request.auth.uid;
+      allow read, delete: if request.auth != null && resource.data.user_id == request.auth.uid;
+    }
+
+    match /query_logs/{logId} {
+      // Search works signed-out too, so anonymous query logging must be allowed.
+      allow create: if true;
+      allow read, update: if request.auth != null;
+    }
+  }
+}

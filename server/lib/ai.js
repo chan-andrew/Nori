@@ -30,17 +30,17 @@ function getClient() {
 const FILTER_SCHEMA = {
   type: "object",
   properties: {
-    protein_grams_min: { type: ["number", "null"], description: "Minimum grams of protein, if stated or implied (e.g. 'high protein' ~ 40)." },
-    protein_grams_max: { type: ["number", "null"] },
-    carb_preference: { type: ["string", "null"], enum: ["low", "moderate", "high", null] },
-    protein_source: { type: ["string", "null"], enum: ["beef", "chicken", "turkey", "fish", "lamb", "pork", "plant", "egg", "dairy", null] },
-    wants_vegetables: { type: ["boolean", "null"], description: "True if the user asked for vegetables, greens, or a salad side." },
-    calorie_target: { type: ["number", "null"], description: "A stated calorie number to aim at (e.g. 'around 600 calories')." },
-    calorie_min: { type: ["number", "null"], description: "Calorie floor, from an explicit statement or a fuzzy term like 'filling'." },
-    calorie_max: { type: ["number", "null"], description: "Calorie ceiling, from an explicit statement or a fuzzy term like 'light'." },
-    fat_target: { type: ["number", "null"] },
-    price_max: { type: ["number", "null"], description: "Max price in dollars, if a budget was stated or implied." },
-    diet_pattern: { type: ["string", "null"], enum: ["vegetarian", "vegan", "keto", "halal", "kosher", null] },
+    protein_grams_min: { anyOf: [{ type: "number" }, { type: "null" }], description: "Minimum grams of protein, if stated or implied (e.g. 'high protein' ~ 40)." },
+    protein_grams_max: { anyOf: [{ type: "number" }, { type: "null" }] },
+    carb_preference: { anyOf: [{ type: "string", enum: ["low", "moderate", "high"] }, { type: "null" }] },
+    protein_source: { anyOf: [{ type: "string", enum: ["beef", "chicken", "turkey", "fish", "lamb", "pork", "plant", "egg", "dairy"] }, { type: "null" }] },
+    wants_vegetables: { anyOf: [{ type: "boolean" }, { type: "null" }], description: "True if the user asked for vegetables, greens, or a salad side." },
+    calorie_target: { anyOf: [{ type: "number" }, { type: "null" }], description: "A stated calorie number to aim at (e.g. 'around 600 calories')." },
+    calorie_min: { anyOf: [{ type: "number" }, { type: "null" }], description: "Calorie floor, from an explicit statement or a fuzzy term like 'filling'." },
+    calorie_max: { anyOf: [{ type: "number" }, { type: "null" }], description: "Calorie ceiling, from an explicit statement or a fuzzy term like 'light'." },
+    fat_target: { anyOf: [{ type: "number" }, { type: "null" }] },
+    price_max: { anyOf: [{ type: "number" }, { type: "null" }], description: "Max price in dollars, if a budget was stated or implied." },
+    diet_pattern: { anyOf: [{ type: "string", enum: ["vegetarian", "vegan", "keto", "halal", "kosher"] }, { type: "null" }] },
     exclude_terms: { type: "array", items: { type: "string" }, description: "Foods the user wants to avoid, lowercase single words." }
   },
   required: [
