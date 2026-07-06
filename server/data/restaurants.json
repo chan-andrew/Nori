@@ -1,72 +1,152 @@
 [
   {
+    "id": "roots-natural-kitchen",
+    "name": "Roots Natural Kitchen",
+    "cuisine_type": "Bowls & Salads",
+    "address": "3610 Forbes Ave, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4413,
+    "lng": -79.9576,
+    "doordash_url": "https://www.doordash.com/search/store/Roots%20Natural%20Kitchen%20Pittsburgh/"
+  },
+  {
+    "id": "stackd-oakland",
+    "name": "Stack'd Oakland",
+    "cuisine_type": "Burgers",
+    "address": "3716 Forbes Ave, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4409,
+    "lng": -79.9556,
+    "doordash_url": "https://www.doordash.com/search/store/Stack'd%20Oakland%20Pittsburgh/"
+  },
+  {
+    "id": "union-grill",
+    "name": "Union Grill Oakland",
+    "cuisine_type": "American",
+    "address": "413 S Craig St, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4452,
+    "lng": -79.9489,
+    "doordash_url": "https://www.doordash.com/search/store/Union%20Grill%20Pittsburgh/"
+  },
+  {
     "id": "porch-schenley",
     "name": "The Porch at Schenley",
     "cuisine_type": "American",
     "address": "221 Schenley Dr, Pittsburgh, PA 15213",
     "neighborhood": "Oakland",
-    "lat": 40.4406,
-    "lng": -79.9531,
-    "uber_eats_url": "https://www.ubereats.com/search?q=The%20Porch%20at%20Schenley%20Pittsburgh"
+    "lat": 40.4383,
+    "lng": -79.9528,
+    "doordash_url": "https://www.doordash.com/search/store/The%20Porch%20at%20Schenley%20Pittsburgh/"
   },
   {
-    "id": "mad-mex",
-    "name": "Mad Mex",
-    "cuisine_type": "Tex-Mex",
-    "address": "370 Atwood St, Pittsburgh, PA 15213",
+    "id": "butterjoint",
+    "name": "Butterjoint",
+    "cuisine_type": "American",
+    "address": "208 N Craig St, Pittsburgh, PA 15213",
     "neighborhood": "Oakland",
-    "lat": 40.4394,
-    "lng": -79.9573,
-    "uber_eats_url": "https://www.ubereats.com/search?q=Mad%20Mex%20Oakland%20Pittsburgh"
+    "lat": 40.4497,
+    "lng": -79.9492,
+    "doordash_url": "https://www.doordash.com/search/store/Butterjoint%20Pittsburgh/"
   },
   {
-    "id": "choolaah",
-    "name": "Choolaah Indian BBQ",
+    "id": "el-jefes-taqueria",
+    "name": "El Jefe's Taqueria",
+    "cuisine_type": "Mexican",
+    "address": "3807 Forbes Ave, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4405,
+    "lng": -79.9541,
+    "doordash_url": "https://www.doordash.com/search/store/El%20Jefe's%20Taqueria%20Pittsburgh/"
+  },
+  {
+    "id": "tamarind-india",
+    "name": "Tamarind Flavor of India",
     "cuisine_type": "Indian",
-    "address": "6114 Centre Ave, Pittsburgh, PA 15206",
-    "neighborhood": "East Liberty",
-    "lat": 40.4573,
-    "lng": -79.9203,
-    "uber_eats_url": "https://www.ubereats.com/search?q=Choolaah%20Indian%20BBQ%20Pittsburgh"
+    "address": "257 N Craig St, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4504,
+    "lng": -79.9490,
+    "doordash_url": "https://www.doordash.com/search/store/Tamarind%20Flavor%20of%20India%20Pittsburgh/"
+  },
+  {
+    "id": "ege-mediterranean",
+    "name": "EGE Mediterranean",
+    "cuisine_type": "Mediterranean",
+    "address": "190 N Craig St, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4494,
+    "lng": -79.9493,
+    "doordash_url": "https://www.doordash.com/search/store/EGE%20Mediterranean%20Pittsburgh/"
+  },
+  {
+    "id": "all-india",
+    "name": "All India Authentic Cuisine",
+    "cuisine_type": "Indian",
+    "address": "315 N Craig St, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4512,
+    "lng": -79.9489,
+    "doordash_url": "https://www.doordash.com/search/store/All%20India%20Pittsburgh/"
+  },
+  {
+    "id": "cava-shadyside",
+    "name": "CAVA",
+    "cuisine_type": "Mediterranean",
+    "address": "151 Shady Ave, Pittsburgh, PA 15206",
+    "neighborhood": "Shadyside",
+    "lat": 40.4519,
+    "lng": -79.9207,
+    "doordash_url": "https://www.doordash.com/search/store/CAVA%20Shadyside%20Pittsburgh/"
+  },
+  {
+    "id": "surf-poke",
+    "name": "Surf Poke",
+    "cuisine_type": "Hawaiian & Poke",
+    "address": "5400 Centre Ave, Pittsburgh, PA 15232",
+    "neighborhood": "Shadyside",
+    "lat": 40.4574,
+    "lng": -79.9340,
+    "doordash_url": "https://www.doordash.com/search/store/Surf%20Poke%20Pittsburgh/"
+  },
+  {
+    "id": "mediterranean-table",
+    "name": "The Mediterranean Table",
+    "cuisine_type": "Mediterranean",
+    "address": "2108 Murray Ave, Pittsburgh, PA 15217",
+    "neighborhood": "Squirrel Hill",
+    "lat": 40.4331,
+    "lng": -79.9227,
+    "doordash_url": "https://www.doordash.com/search/store/The%20Mediterranean%20Table%20Pittsburgh/"
+  },
+  {
+    "id": "khan-chacha-grill",
+    "name": "Khan Chacha Grill",
+    "cuisine_type": "Indian & Pakistani",
+    "address": "4371 Murray Ave, Pittsburgh, PA 15217",
+    "neighborhood": "Squirrel Hill",
+    "lat": 40.4287,
+    "lng": -79.9230,
+    "doordash_url": "https://www.doordash.com/search/store/Khan%20Chacha%20Grill%20Pittsburgh/"
   },
   {
     "id": "honeygrow",
-    "name": "Honeygrow",
+    "name": "honeygrow",
     "cuisine_type": "Stir-fry & Salads",
-    "address": "3425 Forbes Ave, Pittsburgh, PA 15213",
-    "neighborhood": "Oakland",
-    "lat": 40.4405,
-    "lng": -79.9585,
-    "uber_eats_url": "https://www.ubereats.com/search?q=Honeygrow%20Pittsburgh"
+    "address": "105 S Highland Ave, Pittsburgh, PA 15206",
+    "neighborhood": "East Liberty",
+    "lat": 40.4592,
+    "lng": -79.9253,
+    "doordash_url": "https://www.doordash.com/search/store/honeygrow%20East%20Liberty%20Pittsburgh/"
   },
   {
-    "id": "salems",
-    "name": "Salem's Market & Grill",
-    "cuisine_type": "Middle Eastern (Halal)",
-    "address": "2923 Penn Ave, Pittsburgh, PA 15201",
-    "neighborhood": "Strip District",
-    "lat": 40.4557,
-    "lng": -79.9743,
-    "uber_eats_url": "https://www.ubereats.com/search?q=Salem%27s%20Market%20and%20Grill%20Pittsburgh"
-  },
-  {
-    "id": "primanti",
-    "name": "Primanti Bros.",
-    "cuisine_type": "Sandwiches",
-    "address": "46 18th St, Pittsburgh, PA 15222",
-    "neighborhood": "Strip District",
-    "lat": 40.4515,
-    "lng": -79.9861,
-    "uber_eats_url": "https://www.ubereats.com/search?q=Primanti%20Bros%20Strip%20District%20Pittsburgh"
-  },
-  {
-    "id": "sushi-fuku",
-    "name": "Sushi Fuku",
-    "cuisine_type": "Japanese",
-    "address": "120 Oakland Ave, Pittsburgh, PA 15213",
-    "neighborhood": "Oakland",
-    "lat": 40.4413,
-    "lng": -79.9557,
-    "uber_eats_url": "https://www.ubereats.com/search?q=Sushi%20Fuku%20Pittsburgh"
+    "id": "corner-mercantile",
+    "name": "Corner Mercantile",
+    "cuisine_type": "Market & Deli",
+    "address": "472 Wood St, Pittsburgh, PA 15222",
+    "neighborhood": "Downtown",
+    "lat": 40.4396,
+    "lng": -80.0011,
+    "doordash_url": "https://www.doordash.com/search/store/Corner%20Mercantile%20Pittsburgh/"
   }
 ]

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import { api } from "../lib/api.js";
+import { updateProfile } from "../lib/data.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const inputClass =
@@ -31,7 +31,7 @@ export default function Onboarding() {
     setBusy(true);
     setError(null);
     try {
-      const { user: updated } = await api.updateProfile(user.id, {
+      const updated = await updateProfile(user.id, {
         allergies: answers.allergies.trim(),
         diet_pattern: answers.diet_pattern,
         default_calorie_target: answers.default_calorie_target ? Number(answers.default_calorie_target) : null,

@@ -2,7 +2,9 @@ import { Routes, Route } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Landing from "./pages/Landing.jsx";
 import Query from "./pages/Query.jsx";
+import Location from "./pages/Location.jsx";
 import Results from "./pages/Results.jsx";
+import AdminLogs from "./pages/AdminLogs.jsx";
 import DishDetail from "./pages/DishDetail.jsx";
 import SignIn from "./pages/SignIn.jsx";
 import SignUp from "./pages/SignUp.jsx";
@@ -17,7 +19,9 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/order" element={<Query />} />
+          <Route path="/location" element={<Location />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/admin/query-logs" element={<AdminLogs />} />
           <Route path="/dish/:id" element={<DishDetail />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />

@@ -35,7 +35,7 @@ export default function Landing() {
 
       <p className="mt-16 max-w-sm text-xs leading-relaxed text-faint">
         Nutrition values are AI estimates, not restaurant-verified. Ordering completes on
-        Uber Eats.
+        DoorDash.
       </p>
     </section>
   );

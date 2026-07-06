@@ -8,7 +8,7 @@ export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
-  const { login } = useAuth();
+  const { login, loginWithGoogle, googleAvailable } = useAuth();
   const navigate = useNavigate();
 
   async function submit(e) {
@@ -25,12 +25,41 @@ export default function SignIn() {
     }
   }
 
+  async function submitGoogle() {
+    setBusy(true);
+    setError(null);
+    try {
+      const profile = await loginWithGoogle();
+      navigate(profile.onboarding_complete ? "/order" : "/onboarding");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <section className="mx-auto max-w-sm pt-16">
       <h1 className="font-display text-3xl font-semibold tracking-tight">Welcome back</h1>
       <p className="mt-2 text-faint">Sign in to use your saved goals and history.</p>
 
-      <form onSubmit={submit} className="mt-8 flex flex-col gap-4">
+      {googleAvailable && (
+        <>
+          <button
+            type="button"
+            onClick={submitGoogle}
+            disabled={busy}
+            className="mt-8 w-full rounded-full border border-line bg-card px-6 py-3 font-semibold transition-colors hover:border-ink disabled:opacity-50"
+          >
+            Continue with Google
+          </button>
+          <div className="mt-4 flex items-center gap-3 text-xs uppercase tracking-[0.15em] text-faint">
+            <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
+          </div>
+        </>
+      )}
+
+      <form onSubmit={submit} className={`${googleAvailable ? "mt-4" : "mt-8"} flex flex-col gap-4`}>
         <div>
           <label htmlFor="email" className="text-sm font-medium">Email</label>
           <input

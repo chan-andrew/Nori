@@ -4,9 +4,12 @@ import { fileURLToPath } from "node:url";
 import express from "express";
 import cors from "cors";
 import { parseQuery, explainMatch, aiAvailable } from "./lib/ai.js";
-import { rankItems } from "./lib/score.js";
+import { rankWithWidening } from "./lib/score.js";
+import { distanceMiles, deliveryEstimate, isValidLocation, MAX_RADIUS_MILES } from "./lib/geo.js";
 import {
   createUser, verifyUser, getUser, updateUser, logOrder, getOrders,
+  getFavorites, addFavorite, removeFavorite,
+  logQuery, setQueryLogSelection, getQueryLogs,
 } from "./lib/store.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,15 +24,27 @@ const menuItems = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "menu-
 const restaurantById = new Map(restaurants.map((r) => [r.id, r]));
 const itemById = new Map(menuItems.map((m) => [m.id, m]));
 
-function withRestaurant(item) {
+function withRestaurant(item, location = null) {
   const r = restaurantById.get(item.restaurant_id);
-  return {
+  const enriched = {
     ...item,
     restaurant_name: r.name,
     restaurant_neighborhood: r.neighborhood,
+    restaurant_address: r.address,
     cuisine_type: r.cuisine_type,
-    uber_eats_url: r.uber_eats_url,
+    doordash_url: r.doordash_url,
   };
+  if (isValidLocation(location)) {
+    const miles = distanceMiles(
+      { lat: Number(location.lat), lng: Number(location.lng) },
+      { lat: r.lat, lng: r.lng }
+    );
+    const eta = deliveryEstimate(miles);
+    enriched.distance_miles = Math.round(miles * 10) / 10;
+    enriched.delivery_minutes_low = eta.low;
+    enriched.delivery_minutes_high = eta.high;
+  }
+  return enriched;
 }
 
 const app = express();
@@ -40,20 +55,52 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, ai: aiAvailable() ? "claude-haiku-4-5" : "fallback-parser" });
 });
 
-// Job A: free text -> structured filters
+// Job A: free text -> structured filters. Every parse is logged (raw query,
+// parsed filters, timestamp); the log id comes back so the client can attach
+// the selected dish later.
 app.post("/api/parse-query", async (req, res) => {
   const text = (req.body?.text ?? "").trim();
   if (!text) return res.status(400).json({ error: "text is required" });
   const { filters, source } = await parseQuery(text);
-  res.json({ filters, source });
+  const log = logQuery({ rawQuery: text, parsedFilters: filters, userId: req.body?.user_id ?? null });
+  res.json({ filters, source, query_log_id: log.id });
 });
 
-// Filters -> ranked dishes. /api/refine is the same computation on adjusted
-// filters; both accept the full filter object so the client stays stateless.
+// Filters (+ optional location) -> ranked dishes. /api/refine is the same
+// computation on adjusted filters; both accept the full filter object so the
+// client stays stateless.
+//
+// With five neighborhoods in the dataset, a known location first trims the
+// pool to restaurants within MAX_RADIUS_MILES, then the scoring pass runs.
+// If nothing sits inside the ±10% tolerance band, the band widens
+// automatically and every returned dish carries outside_original_request.
 function searchHandler(req, res) {
   const filters = req.body?.filters ?? {};
-  const results = rankItems(menuItems, filters).map(withRestaurant);
-  res.json({ results, count: results.length });
+  const location = req.body?.location ?? null;
+
+  let pool = menuItems;
+  let locationApplied = false;
+  if (isValidLocation(location)) {
+    const origin = { lat: Number(location.lat), lng: Number(location.lng) };
+    const nearIds = new Set(
+      restaurants
+        .filter((r) => distanceMiles(origin, r) <= MAX_RADIUS_MILES)
+        .map((r) => r.id)
+    );
+    if (nearIds.size > 0) {
+      pool = menuItems.filter((m) => nearIds.has(m.restaurant_id));
+      locationApplied = true;
+    }
+  }
+
+  const { results, widened, tolerance } = rankWithWidening(pool, filters);
+  res.json({
+    results: results.map((item) => withRestaurant(item, location)),
+    count: results.length,
+    widened,
+    tolerance,
+    location_applied: locationApplied,
+  });
 }
 app.post("/api/search", searchHandler);
 app.post("/api/refine", searchHandler);
@@ -70,7 +117,8 @@ app.post("/api/explain", async (req, res) => {
   res.json({ explanation, source });
 });
 
-// --- Auth & profile (local MVP implementation; Firebase swap planned) ------
+// --- Auth & profile (local fallback; Firebase Auth + Firestore take over
+// --- when the client is configured with a Firebase project) ---------------
 
 app.post("/api/auth/signup", (req, res) => {
   const { email, password } = req.body ?? {};
@@ -125,12 +173,62 @@ app.put("/api/profile/:userId", (req, res) => {
 });
 
 app.post("/api/orders", (req, res) => {
-  const { user_id, menu_item_id, filters } = req.body ?? {};
+  const { user_id, menu_item_id, filters, query_log_id } = req.body ?? {};
   if (!itemById.has(menu_item_id)) {
     return res.status(400).json({ error: "menu_item_id is required and must exist" });
   }
   const order = logOrder({ userId: user_id, menuItemId: menu_item_id, filters });
+  if (query_log_id) setQueryLogSelection(query_log_id, menu_item_id);
   res.status(201).json({ order });
+});
+
+// --- Favorites (local fallback for the Firestore `favorites` collection) ---
+
+app.get("/api/favorites/:userId", (req, res) => {
+  const favorites = getFavorites(req.params.userId).map((f) => {
+    const item = itemById.get(f.menu_item_id);
+    return item ? { ...f, item: withRestaurant(item) } : f;
+  });
+  res.json({ favorites });
+});
+
+app.post("/api/favorites", (req, res) => {
+  const { user_id, menu_item_id } = req.body ?? {};
+  if (!user_id || !itemById.has(menu_item_id)) {
+    return res.status(400).json({ error: "user_id and an existing menu_item_id are required" });
+  }
+  const favorite = addFavorite({ userId: user_id, menuItemId: menu_item_id });
+  res.status(201).json({ favorite });
+});
+
+app.delete("/api/favorites/:userId/:menuItemId", (req, res) => {
+  const removed = removeFavorite(req.params.userId, req.params.menuItemId);
+  res.json({ removed });
+});
+
+// --- Query logs (local fallback for the Firestore `query_logs` collection) -
+// GET supports ?format=csv for the weekly spreadsheet review.
+
+app.get("/api/query-logs", (req, res) => {
+  const logs = getQueryLogs();
+  if (req.query.format === "csv") {
+    const esc = (v) => `"${String(v ?? "").replaceAll('"', '""')}"`;
+    const rows = [
+      ["id", "timestamp", "raw_query", "parsed_filters", "selected_dish_id"].join(","),
+      ...logs.map((l) =>
+        [esc(l.id), esc(l.timestamp), esc(l.raw_query), esc(JSON.stringify(l.parsed_filters)), esc(l.selected_dish_id)].join(",")
+      ),
+    ];
+    res.type("text/csv").attachment("nori-query-logs.csv").send(rows.join("\n"));
+    return;
+  }
+  res.json({ logs });
+});
+
+app.patch("/api/query-logs/:id", (req, res) => {
+  const entry = setQueryLogSelection(req.params.id, req.body?.selected_dish_id ?? null);
+  if (!entry) return res.status(404).json({ error: "query log not found" });
+  res.json({ log: entry });
 });
 
 const PORT = process.env.PORT ?? 4000;

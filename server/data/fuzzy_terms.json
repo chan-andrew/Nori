@@ -1,0 +1,37 @@
+[
+  {
+    "term": "light",
+    "sets": { "calorie_max": 500 },
+    "note": "Calorie ceiling near 500. Protein and carbs stay unchanged unless the user states a number."
+  },
+  {
+    "term": "comfort food",
+    "sets": { "calorie_max": null, "calorie_target": null, "carb_preference": "high" },
+    "note": "Removes any calorie ceiling and sets carb preference to high."
+  },
+  {
+    "term": "post workout",
+    "sets": { "protein_grams_min": 40, "carb_preference": "moderate" },
+    "note": "Protein minimum near 40 g; carb preference moderate or high (default moderate)."
+  },
+  {
+    "term": "keto friendly",
+    "sets": { "carb_preference": "low", "fat_target": null },
+    "note": "Carb preference minimal/low; fat allowance raised (leave fat_target null so fat is never penalized)."
+  },
+  {
+    "term": "quick bite",
+    "sets": { "price_max": 10 },
+    "note": "Price ceiling near 10 dollars."
+  },
+  {
+    "term": "filling",
+    "sets": { "calorie_min": 700 },
+    "note": "Calorie floor near 700."
+  },
+  {
+    "term": "on a budget",
+    "sets": { "price_max": 12 },
+    "note": "Price ceiling near 12 dollars."
+  }
+]

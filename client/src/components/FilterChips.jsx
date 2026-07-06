@@ -9,6 +9,8 @@ export function filterLabels(filters) {
   if (filters.protein_source) chips.push(filters.protein_source);
   if (filters.wants_vegetables) chips.push("veggies on the side");
   if (filters.calorie_target != null) chips.push(`~${filters.calorie_target} cal`);
+  if (filters.calorie_max != null) chips.push(`under ${filters.calorie_max} cal`);
+  if (filters.calorie_min != null) chips.push(`${filters.calorie_min}+ cal`);
   if (filters.fat_target != null) chips.push(`~${filters.fat_target}g fat`);
   if (filters.price_max != null) chips.push(`under $${filters.price_max}`);
   if (filters.diet_pattern) chips.push(filters.diet_pattern);

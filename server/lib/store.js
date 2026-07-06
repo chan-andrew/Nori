@@ -11,6 +11,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const RUNTIME_DIR = path.join(__dirname, "..", "data", "runtime");
 const USERS_FILE = path.join(RUNTIME_DIR, "users.json");
 const ORDERS_FILE = path.join(RUNTIME_DIR, "orders.json");
+const FAVORITES_FILE = path.join(RUNTIME_DIR, "favorites.json");
+const QUERY_LOGS_FILE = path.join(RUNTIME_DIR, "query-logs.json");
 
 function load(file, fallback) {
   try {
@@ -53,6 +55,9 @@ export function createUser(email, password) {
     default_protein_target: null,
     disliked_foods: "",
     average_budget: null,
+    saved_address: "",
+    saved_lat: null,
+    saved_lng: null,
     onboarding_complete: false,
   };
   users.push(user);
@@ -85,6 +90,7 @@ export function updateUser(userId, updates) {
   const allowed = [
     "allergies", "diet_pattern", "default_calorie_target", "default_protein_target",
     "disliked_foods", "average_budget", "onboarding_complete",
+    "saved_address", "saved_lat", "saved_lng",
   ];
   for (const key of allowed) {
     if (key in updates) users[idx][key] = updates[key];
@@ -109,4 +115,68 @@ export function logOrder({ userId, menuItemId, filters }) {
 
 export function getOrders(userId) {
   return load(ORDERS_FILE, []).filter((o) => o.user_id === userId);
+}
+
+// --- Favorites (local stand-in for the Firestore `favorites` collection) ----
+
+export function getFavorites(userId) {
+  return load(FAVORITES_FILE, []).filter((f) => f.user_id === userId);
+}
+
+export function addFavorite({ userId, menuItemId }) {
+  const favorites = load(FAVORITES_FILE, []);
+  const existing = favorites.find(
+    (f) => f.user_id === userId && f.menu_item_id === menuItemId
+  );
+  if (existing) return existing;
+  const favorite = {
+    id: crypto.randomUUID(),
+    user_id: userId,
+    menu_item_id: menuItemId,
+    saved_at: new Date().toISOString(),
+  };
+  favorites.push(favorite);
+  save(FAVORITES_FILE, favorites);
+  return favorite;
+}
+
+export function removeFavorite(userId, menuItemId) {
+  const favorites = load(FAVORITES_FILE, []);
+  const next = favorites.filter(
+    (f) => !(f.user_id === userId && f.menu_item_id === menuItemId)
+  );
+  save(FAVORITES_FILE, next);
+  return next.length !== favorites.length;
+}
+
+// --- Query logs (local stand-in for the Firestore `query_logs` collection) --
+// One entry per parsed query: raw_query, parsed_filters, selected_dish_id,
+// timestamp. selected_dish_id fills in later if the user orders a dish.
+
+export function logQuery({ rawQuery, parsedFilters, userId }) {
+  const logs = load(QUERY_LOGS_FILE, []);
+  const entry = {
+    id: crypto.randomUUID(),
+    user_id: userId ?? null,
+    raw_query: rawQuery,
+    parsed_filters: parsedFilters ?? null,
+    selected_dish_id: null,
+    timestamp: new Date().toISOString(),
+  };
+  logs.push(entry);
+  save(QUERY_LOGS_FILE, logs);
+  return entry;
+}
+
+export function setQueryLogSelection(logId, dishId) {
+  const logs = load(QUERY_LOGS_FILE, []);
+  const entry = logs.find((l) => l.id === logId);
+  if (!entry) return null;
+  entry.selected_dish_id = dishId;
+  save(QUERY_LOGS_FILE, logs);
+  return entry;
+}
+
+export function getQueryLogs() {
+  return load(QUERY_LOGS_FILE, []).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 }

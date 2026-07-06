@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { api } from "../lib/api.js";
+import { getProfileBundle } from "../lib/data.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useFavorites } from "../context/FavoritesContext.jsx";
 import MacroRow from "../components/MacroRow.jsx";
 
 export default function Profile() {
   const { user, logout } = useAuth();
+  const { favorites, toggleFavorite } = useFavorites();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!user) return;
-    api.getProfile(user.id).then(setData).catch((err) => setError(err.message));
+    getProfileBundle(user.id).then(setData).catch((err) => setError(err.message));
   }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) return <Navigate to="/signin" replace />;
@@ -25,6 +27,7 @@ export default function Profile() {
     ["Daily calories", prefs.default_calorie_target ? `${prefs.default_calorie_target} cal` : "—"],
     ["Daily protein", prefs.default_protein_target ? `${prefs.default_protein_target} g` : "—"],
     ["Meal budget", prefs.average_budget ? `$${prefs.average_budget}` : "—"],
+    ["Saved address", prefs.saved_address || "—"],
   ];
 
   return (
@@ -85,6 +88,48 @@ export default function Profile() {
           </p>
         </div>
       )}
+
+      <div className="mt-8">
+        <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-faint">
+          Favorites
+        </h2>
+        {favorites.length === 0 ? (
+          <p className="mt-3 rounded-2xl border border-line bg-card p-6 text-sm text-faint">
+            No favorites yet — tap the star on any result card to save a dish.
+          </p>
+        ) : (
+          <div className="mt-3 flex flex-col gap-3">
+            {favorites.map((fav) => (
+              <div key={fav.id} className="rounded-2xl border border-line bg-card p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="font-display font-semibold">{fav.item?.name ?? fav.menu_item_id}</p>
+                    {fav.item?.restaurant_name && (
+                      <p className="mt-0.5 text-sm text-faint">
+                        {fav.item.restaurant_name}
+                        {fav.item.restaurant_neighborhood && <> · {fav.item.restaurant_neighborhood}</>}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex shrink-0 items-center gap-3">
+                    {fav.item && (
+                      <span className="font-semibold tabular-nums">${fav.item.price.toFixed(2)}</span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => fav.item && toggleFavorite(fav.item)}
+                      className="text-xs font-semibold text-faint hover:text-danger"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+                {fav.item && <MacroRow item={fav.item} className="mt-3" />}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-faint">

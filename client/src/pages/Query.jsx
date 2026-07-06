@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../lib/api.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useSearch } from "../context/SearchContext.jsx";
+import { firebaseEnabled } from "../lib/firebase.js";
+import { logQueryToFirestore } from "../lib/data.js";
 
 const EXAMPLES = [
   "High protein dinner, 50 to 60 grams of protein, beef, low carb, veggies on the side",
@@ -17,7 +19,7 @@ export default function Query() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { runSearch } = useSearch();
+  const { runSearch, location, setLocation, setPending } = useSearch();
 
   async function submit(raw) {
     const value = raw.trim();
@@ -25,8 +27,17 @@ export default function Query() {
     setLoading(true);
     setError(null);
     try {
-      const { filters } = await api.parseQuery(value);
-      // Fold in saved profile exclusions so allergies/dislikes always apply.
+      const { filters, query_log_id } = await api.parseQuery(value, user?.id ?? null);
+      // Every query is logged (raw_query, parsed_filters, timestamp); the id
+      // lets the selected dish attach later. Firestore takes over when configured.
+      let queryLogId = query_log_id ?? null;
+      if (firebaseEnabled) {
+        queryLogId = await logQueryToFirestore({
+          rawQuery: value, parsedFilters: filters, userId: user?.id ?? null,
+        }).catch(() => null);
+      }
+      // Automatic allergy filtering: profile allergies and dislikes join the
+      // exclusions on every search, without being restated in the query.
       if (user) {
         const extra = [user.allergies, user.disliked_foods]
           .filter(Boolean)
@@ -37,7 +48,20 @@ export default function Query() {
           filters.diet_pattern = user.diet_pattern;
         }
       }
-      await runSearch(value, filters);
+
+      // Location comes right after the prompt: use the session's, fall back to
+      // the profile's saved address, otherwise ask on the next screen.
+      let loc = location;
+      if (!loc && user?.saved_lat != null && user?.saved_lng != null) {
+        loc = { address: user.saved_address || "Saved address", lat: user.saved_lat, lng: user.saved_lng };
+        setLocation(loc);
+      }
+      if (!loc) {
+        setPending({ text: value, filters, queryLogId });
+        navigate("/location");
+        return;
+      }
+      await runSearch(value, filters, loc, queryLogId);
       navigate("/results");
     } catch (err) {
       setError(err.message);
