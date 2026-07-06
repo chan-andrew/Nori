@@ -1,0 +1,72 @@
+[
+  {
+    "id": "porch-schenley",
+    "name": "The Porch at Schenley",
+    "cuisine_type": "American",
+    "address": "221 Schenley Dr, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4406,
+    "lng": -79.9531,
+    "uber_eats_url": "https://www.ubereats.com/search?q=The%20Porch%20at%20Schenley%20Pittsburgh"
+  },
+  {
+    "id": "mad-mex",
+    "name": "Mad Mex",
+    "cuisine_type": "Tex-Mex",
+    "address": "370 Atwood St, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4394,
+    "lng": -79.9573,
+    "uber_eats_url": "https://www.ubereats.com/search?q=Mad%20Mex%20Oakland%20Pittsburgh"
+  },
+  {
+    "id": "choolaah",
+    "name": "Choolaah Indian BBQ",
+    "cuisine_type": "Indian",
+    "address": "6114 Centre Ave, Pittsburgh, PA 15206",
+    "neighborhood": "East Liberty",
+    "lat": 40.4573,
+    "lng": -79.9203,
+    "uber_eats_url": "https://www.ubereats.com/search?q=Choolaah%20Indian%20BBQ%20Pittsburgh"
+  },
+  {
+    "id": "honeygrow",
+    "name": "Honeygrow",
+    "cuisine_type": "Stir-fry & Salads",
+    "address": "3425 Forbes Ave, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4405,
+    "lng": -79.9585,
+    "uber_eats_url": "https://www.ubereats.com/search?q=Honeygrow%20Pittsburgh"
+  },
+  {
+    "id": "salems",
+    "name": "Salem's Market & Grill",
+    "cuisine_type": "Middle Eastern (Halal)",
+    "address": "2923 Penn Ave, Pittsburgh, PA 15201",
+    "neighborhood": "Strip District",
+    "lat": 40.4557,
+    "lng": -79.9743,
+    "uber_eats_url": "https://www.ubereats.com/search?q=Salem%27s%20Market%20and%20Grill%20Pittsburgh"
+  },
+  {
+    "id": "primanti",
+    "name": "Primanti Bros.",
+    "cuisine_type": "Sandwiches",
+    "address": "46 18th St, Pittsburgh, PA 15222",
+    "neighborhood": "Strip District",
+    "lat": 40.4515,
+    "lng": -79.9861,
+    "uber_eats_url": "https://www.ubereats.com/search?q=Primanti%20Bros%20Strip%20District%20Pittsburgh"
+  },
+  {
+    "id": "sushi-fuku",
+    "name": "Sushi Fuku",
+    "cuisine_type": "Japanese",
+    "address": "120 Oakland Ave, Pittsburgh, PA 15213",
+    "neighborhood": "Oakland",
+    "lat": 40.4413,
+    "lng": -79.9557,
+    "uber_eats_url": "https://www.ubereats.com/search?q=Sushi%20Fuku%20Pittsburgh"
+  }
+]

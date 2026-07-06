@@ -1,0 +1,67 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap");
+@import "tailwindcss";
+
+/* Class-based dark mode: `.dark` on <html> wins; system preference seeds it. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: "Karla", ui-sans-serif, system-ui, sans-serif;
+
+  /* Editorial palette: warm paper, near-black ink, one restrained green accent
+     reserved for match scores and primary actions. Components only ever use
+     these tokens, so dark mode is a token swap (below), not per-class variants. */
+  --color-paper: #fdfdfb;
+  --color-ink: #1c1b18;
+  --color-faint: #6f6b63;
+  --color-mist: #f4f3ee;
+  --color-line: #e6e4dd;
+  --color-card: #ffffff;
+  --color-accent: #047857;
+  --color-accent-dark: #065f46;
+  --color-accent-soft: #ecfdf5;
+  --color-on-accent: #ffffff;
+  --color-amber-soft: #fffbeb;
+  --color-amber-ink: #92400e;
+  --color-danger: #b91c1c;
+}
+
+/* Dark palette: same warmth, inverted values. Accent lightens for text
+   contrast on dark paper, so accent buttons flip to dark-on-light-green. */
+.dark {
+  --color-paper: #131311;
+  --color-ink: #ece9e2;
+  --color-faint: #a29d92;
+  --color-mist: #211f1c;
+  --color-line: #33312b;
+  --color-card: #1c1b18;
+  --color-accent: #34d399;
+  --color-accent-dark: #6ee7b7;
+  --color-accent-soft: #0d2c21;
+  --color-on-accent: #0b2a1e;
+  --color-amber-soft: #2b230d;
+  --color-amber-ink: #fbbf24;
+  --color-danger: #f87171;
+}
+
+html {
+  color-scheme: light;
+  background-color: var(--color-paper);
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
