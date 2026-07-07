@@ -4,13 +4,13 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useSearch } from "../context/SearchContext.jsx";
 import { updateProfile } from "../lib/data.js";
 
-// Location capture is the first step of ordering — before the text prompt.
-// Distance and delivery time can't render without it, and with restaurants
-// across five neighborhoods it decides which subset of the dataset is close
-// enough to surface. Kept per session; auto-saved to the profile when signed
-// in. Also reachable mid-session (with a pending query) via the "Change"
-// link on the results page, in which case finishing here re-runs the search
-// instead of moving on to the query screen.
+// Location capture happens after the text prompt: submitting a query with no
+// known location stashes it as `pending` and lands here, and finishing runs
+// the search. Distance and delivery time can't render without it, and with
+// restaurants across five neighborhoods it decides which subset of the
+// dataset is close enough to surface. Kept per session; auto-saved to the
+// profile when signed in. Also reachable mid-session via the "Change" link
+// on the results page, which re-runs the current query from the new spot.
 
 const NEIGHBORHOODS = [
   { name: "Oakland", lat: 40.442, lng: -79.955 },

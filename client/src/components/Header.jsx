@@ -38,7 +38,7 @@ export default function Header() {
           Nori
         </Link>
         <nav className="flex items-center gap-4 text-sm font-medium">
-          {pathname !== "/order" && (
+          {pathname !== "/order" && pathname !== "/" && (
             <Link to="/order" className="text-faint hover:text-ink transition-colors">
               Search
             </Link>

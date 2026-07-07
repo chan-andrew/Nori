@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useSearch } from "../context/SearchContext.jsx";
+import FilterChips from "./FilterChips.jsx";
+import NoriLoader from "./NoriLoader.jsx";
 
 // Sliders sit at their minimum for "no preference" (null in the filter object).
 // Applying re-runs the ranking; the results list above updates in place.
@@ -46,6 +48,10 @@ export default function RefinePanel() {
       <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-faint">
         Refine
       </h2>
+
+      <div className="mt-3">
+        <FilterChips filters={filters} />
+      </div>
 
       <div className="mt-4 grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
         {SLIDERS.map(({ key, label, unit, min, max, step }) => (
@@ -97,8 +103,9 @@ export default function RefinePanel() {
             type="button"
             onClick={apply}
             disabled={busy}
-            className="w-full rounded-full border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2.5 rounded-full border border-accent px-5 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-50"
           >
+            {busy && <NoriLoader size={14} />}
             {busy ? "Re-ranking…" : "Apply refinements"}
           </button>
         </div>

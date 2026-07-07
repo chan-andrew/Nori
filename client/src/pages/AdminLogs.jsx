@@ -40,7 +40,7 @@ export default function AdminLogs() {
           type="button"
           onClick={downloadCsv}
           disabled={!logs || logs.length === 0}
-          className="text-sm font-semibold text-accent hover:text-accent-dark disabled:opacity-40"
+          className="text-sm font-semibold text-accent transition-colors hover:text-accent-dark disabled:opacity-40"
         >
           Export CSV
         </button>

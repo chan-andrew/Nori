@@ -95,7 +95,7 @@ export default function SignUp() {
               <button
                 type="button"
                 onClick={() => setShowPassword((s) => !s)}
-                className="absolute inset-y-0 right-3 text-xs font-semibold text-faint hover:text-ink"
+                className="absolute inset-y-0 right-3 text-xs font-semibold text-faint transition-colors hover:text-ink"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -118,7 +118,7 @@ export default function SignUp() {
 
         <p className="mt-6 text-center text-sm text-faint">
           Already have one?{" "}
-          <Link to="/signin" className="font-semibold text-accent hover:text-accent-dark">
+          <Link to="/signin" className="font-semibold text-accent transition-colors hover:text-accent-dark">
             Sign in
           </Link>
         </p>

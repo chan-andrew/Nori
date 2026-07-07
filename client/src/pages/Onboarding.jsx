@@ -165,7 +165,7 @@ export default function Onboarding() {
           <button
             type="button"
             onClick={() => navigate("/order")}
-            className="text-sm font-semibold text-faint hover:text-ink"
+            className="text-sm font-semibold text-faint transition-colors hover:text-ink"
           >
             Skip for now
           </button>

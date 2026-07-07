@@ -50,7 +50,7 @@ export default function DishDetail() {
 
   return (
     <section className="pt-8">
-      <Link to="/results" className="text-sm font-semibold text-faint hover:text-ink">
+      <Link to="/results" className="text-sm font-semibold text-faint transition-colors hover:text-ink">
         ← Back to results
       </Link>
 
@@ -115,7 +115,7 @@ export default function DishDetail() {
       </div>
       {!user && (
         <p className="mt-2 text-xs text-faint">
-          <Link to="/signup" className="underline underline-offset-2 hover:text-accent">
+          <Link to="/signup" className="underline underline-offset-2 transition-colors hover:text-accent">
             Sign up
           </Link>{" "}
           to save this to your order history.

@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSearch } from "../context/SearchContext.jsx";
 import DishCard from "../components/DishCard.jsx";
-import FilterChips from "../components/FilterChips.jsx";
 import RefinePanel from "../components/RefinePanel.jsx";
+import Reveal from "../components/Reveal.jsx";
 
 export default function Results() {
   const { queryText, filters, results, widened, location, setLocation, setPending } = useSearch();
@@ -43,11 +43,11 @@ export default function Results() {
             type="button"
             onClick={() => setShowRefine((s) => !s)}
             aria-expanded={showRefine}
-            className="text-accent hover:text-accent-dark"
+            className="text-accent transition-colors hover:text-accent-dark"
           >
             {showRefine ? "Hide refine" : "Refine"}
           </button>
-          <Link to="/order" className="text-faint hover:text-ink">
+          <Link to="/order" className="text-faint transition-colors hover:text-ink">
             Edit request
           </Link>
         </div>
@@ -62,16 +62,12 @@ export default function Results() {
           <Link
             to="/location"
             onClick={changeLocation}
-            className="font-semibold text-accent hover:text-accent-dark"
+            className="font-semibold text-accent transition-colors hover:text-accent-dark"
           >
             Change
           </Link>
         </p>
       )}
-      <div className="mt-4">
-        <FilterChips filters={filters} />
-      </div>
-
       {widened && (
         <div className="mt-5 rounded-2xl bg-amber-soft p-4 text-sm leading-relaxed text-amber-ink" role="status">
           <strong>We loosened your filters.</strong> Nothing landed inside your exact targets, so
@@ -121,15 +117,17 @@ export default function Results() {
           </p>
           <Link
             to="/order"
-            className="mt-5 inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-dark"
+            className="mt-5 inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-dark"
           >
             Rewrite request
           </Link>
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-3">
-          {visible.map((item) => (
-            <DishCard key={item.id} item={item} />
+          {visible.map((item, i) => (
+            <Reveal key={item.id} delay={Math.min(i, 6) * 60}>
+              <DishCard item={item} />
+            </Reveal>
           ))}
         </div>
       )}

@@ -59,6 +59,51 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Results list entrance: each card fades in and shifts up slightly the first
+   time it scrolls into view (see components/Reveal.jsx). */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Nori-roll loading loop (see components/NoriLoader.jsx): the sheet
+   compresses toward its center — since its rounded corners don't shrink with
+   it, that reads as rolling into a cylinder — then unrolls. Under 2s/cycle. */
+@keyframes nori-roll {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.22); }
+}
+
+@keyframes nori-roll-fade {
+  0%, 100% { opacity: 1; }
+  40%, 60% { opacity: 0; }
+}
+
+@keyframes nori-roll-shine {
+  0%, 100% { opacity: 0; }
+  40%, 60% { opacity: 0.9; }
+}
+
+.nori-loader-roll {
+  transform-origin: 50% 50%;
+  animation: nori-roll 1.6s ease-in-out infinite;
+}
+
+.nori-loader-texture {
+  animation: nori-roll-fade 1.6s ease-in-out infinite;
+}
+
+.nori-loader-shine {
+  opacity: 0;
+  animation: nori-roll-shine 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -43,7 +43,7 @@ export default function Profile() {
             logout();
             navigate("/");
           }}
-          className="text-sm font-semibold text-faint hover:text-ink"
+          className="text-sm font-semibold text-faint transition-colors hover:text-ink"
         >
           Sign out
         </button>
@@ -56,7 +56,7 @@ export default function Profile() {
           <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-faint">
             Preferences
           </h2>
-          <Link to="/onboarding" className="text-sm font-semibold text-accent hover:text-accent-dark">
+          <Link to="/onboarding" className="text-sm font-semibold text-accent transition-colors hover:text-accent-dark">
             Edit
           </Link>
         </div>
@@ -118,7 +118,7 @@ export default function Profile() {
                     <button
                       type="button"
                       onClick={() => fav.item && toggleFavorite(fav.item)}
-                      className="text-xs font-semibold text-faint hover:text-danger"
+                      className="text-xs font-semibold text-faint transition-colors hover:text-danger"
                     >
                       Remove
                     </button>
@@ -140,7 +140,7 @@ export default function Profile() {
             <p className="text-faint">No orders yet.</p>
             <Link
               to="/order"
-              className="mt-4 inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-dark"
+              className="mt-4 inline-block rounded-full bg-accent px-6 py-2.5 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-dark"
             >
               Find your first dish
             </Link>

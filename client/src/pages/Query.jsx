@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useSearch } from "../context/SearchContext.jsx";
 import { firebaseEnabled } from "../lib/firebase.js";
 import { logQueryToFirestore } from "../lib/data.js";
+import NoriLoader from "../components/NoriLoader.jsx";
 
 const EXAMPLES = [
   "High protein dinner, 50 to 60 grams of protein, beef, low carb, veggies on the side",
@@ -21,16 +22,14 @@ export default function Query() {
   const { user } = useAuth();
   const { runSearch, location, setLocation, setPending } = useSearch();
 
-  // Location is asked for first, before the text prompt: fall back to the
-  // profile's saved address, otherwise send the user to /location and come
-  // back here once it's set.
+  // The prompt box is the landing screen; location is resolved lazily. A
+  // signed-in user's saved address fills in silently here — everyone else is
+  // asked on /location only after submitting (see submit below).
   useEffect(() => {
     if (location) return;
     if (user?.saved_lat != null && user?.saved_lng != null) {
       setLocation({ address: user.saved_address || "Saved address", lat: user.saved_lat, lng: user.saved_lng });
-      return;
     }
-    navigate("/location");
   }, [location, user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function submit(raw) {
@@ -61,8 +60,6 @@ export default function Query() {
         }
       }
 
-      // Location is normally set before this screen is reachable (see the
-      // effect above); this is just a safety net against a race on submit.
       let loc = location;
       if (!loc && user?.saved_lat != null && user?.saved_lng != null) {
         loc = { address: user.saved_address || "Saved address", lat: user.saved_lat, lng: user.saved_lng };
@@ -81,10 +78,6 @@ export default function Query() {
       setLoading(false);
     }
   }
-
-  // Redirecting to /location (see the effect above) — skip the flash of the
-  // text prompt while that happens.
-  if (!location) return null;
 
   return (
     <section className="pt-14 sm:pt-20">
@@ -112,7 +105,7 @@ export default function Query() {
           rows={4}
           autoFocus
           placeholder='e.g. "I want a high protein dinner, 50 to 60 grams of protein, beef, low carb, veggies on the side"'
-          className="w-full resize-none rounded-2xl border border-line bg-card p-5 text-lg leading-relaxed placeholder:text-faint/60 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
+          className="w-full resize-none rounded-2xl border border-line bg-card p-5 text-lg leading-relaxed placeholder:text-faint/60 transition-colors hover:border-ink/30 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
         />
         {error && (
           <p role="alert" className="mt-3 text-sm font-medium text-danger">
@@ -122,8 +115,9 @@ export default function Query() {
         <button
           type="submit"
           disabled={loading || !text.trim()}
-          className="mt-4 w-full rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-on-accent transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
+          className="mt-4 flex w-full items-center justify-center gap-3 rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-on-accent transition-colors hover:bg-accent-dark disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
         >
+          {loading && <NoriLoader size={18} />}
           {loading ? "Reading your request…" : "Find dishes"}
         </button>
       </form>
